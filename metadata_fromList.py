@@ -9,11 +9,17 @@ import requests
 import zipfile
 import sys
 
+def touch(fname):
+    with open(fname,'a'):
+        os.utime(fname,None)
+
 input = sys.argv[1]
 output = sys.argv[2]
 
 input = os.path.expanduser(input)
 output = os.path.expanduser(output)
+
+touch(output + 'missed.log')
 
 try:
     os.makedirs(output)
