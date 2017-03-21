@@ -8,7 +8,7 @@ import json
 import requests
 import zipfile
 import sys
-
+from metadata import payload
 
 def touch(fname):
     with open(fname, 'a'):
@@ -56,7 +56,8 @@ for doi in content:
         continue
 
     with open(output + doi, 'w') as json_file:
-        json_file.write(json.dumps(metadata))
+        out = payload.PayloadEncoder().encode(metadata)
+        json_file.write(out)
 
     print("--- %s seconds ---" % (time.time() - start_time))
 
