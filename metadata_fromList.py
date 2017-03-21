@@ -26,7 +26,8 @@ touch(output + 'missed.log')
 try:
     os.makedirs(output)
 except:
-    print('exist')
+#    print('exist')
+    pass
 
 with open(input) as f:
     content = f.readlines()

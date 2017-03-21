@@ -35,7 +35,7 @@ def extract(doi, type=None):
             print('return')
             return metadata
 
-    print(doc_url)
+    #print(doc_url)
     if 'wiley' in doc_url:
         metadata = wiley.map(doc_url)
     elif 'worldscientific' in doc_url:
