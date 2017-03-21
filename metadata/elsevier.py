@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from .payload import Payload, Author
 import re
 
+
 def map(url):
     meta = Payload()
 
@@ -86,47 +87,65 @@ def map2(html):
     if td:
         for li in td.children:
             name = li.find_all('a')[0].contents[0]
-            reference = li.find_all('a')[1].find('sup').contents[0]
+            if li.find('sup'):
+                reference = li.find('sup').contents[0]
+            else:
+                reference = 'a'
             authors[name] = reference
 
     td = html.find('ul', {'class': 'affiliation'})
     if td:
         for li in td.children:
-            reference = li.find('sup').contents[0]
+            if li.find('sup'):
+                reference = li.find('sup').contents[0]
+            else:
+                reference = 'a'
             institute = li.find('span').contents[0]
             affiliation[reference] = institute
 
     for author in authors:
         for institute in affiliation:
             if authors[author] == institute:
-                meta.authors.append(Author(surname=author,affiliations=affiliation[institute]))
+                meta.authors.append(Author(surname=author, affiliations=affiliation[institute]))
 
-    td = html.find('p',{'class':'volIssue'})
+    td = html.find('p', {'class': 'volIssue'})
     (volume, issue) = td.find('a').contents[0].split(',')
     meta.volumes.first = volume.split()[-1]
     meta.issues.first = issue.split()[-1]
     (year, pages) = td.contents[-1].split(',')[1:3]
     pages = pages.split()[-1]
-    m = re.search('([0-9]*).([0-9]*)',pages,re.UNICODE)
+    m = re.search('([0-9]*).([0-9]*)', pages, re.UNICODE)
     pages = m.groups()
     meta.pages.first = pages[0]
     meta.pages.last = pages[1]
     td = html.find('div', {'class': 'title'})
     meta.journal_title = td.find('span').contents[0]
     meta.publisher = 'Elsevier'
-    td = html.find('dl',{'class':'articleDates'})
-    (accepted, online) = td.find('dd').contents[0].split(',')
-    accepted = ' '.join(accepted.split()[1:])
-    online = ' '.join(online.split()[2:])
+    td = html.find('dl', {'class': 'articleDates'})
+    data = td.find('dd').contents[0].split(',')
+    accepted = ''
+    online = ''
+    received = ''
+    for dates in data:
+        if 'accepted' in dates.lower():
+            m = re.search('([0-9]+.*[0-9]+)', dates)
+            accepted = m.group(0)
+        elif 'available' in dates.lower():
+            m = re.search('([0-9]+.*[0-9]+)', dates)
+            online = m.group(0)
+        elif 'received' in dates.lower():
+            m = re.search('([0-9]+.*[0-9]+)', dates)
+            received = m.group(0)
     meta.online_date = online
     meta.publication_date = accepted
+    meta.received = received
     td = html.find_all('script')
     for script in td:
         for element in script.contents:
             if 'doi' in element:
                 for item in element.split(';'):
                     if 'SDM.doi' in item:
-                        m = re.search("'(.*)'",item)
+                        m = re.search("'(.*)'", item)
                         data = m.groups()
                         meta.doi = data[0]
     return meta
