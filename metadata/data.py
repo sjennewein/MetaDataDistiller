@@ -46,6 +46,8 @@ def extract(doi, type=None):
         metadata = hindawi.map(doc_url)
     elif 'elsevier' in doc_url:
         metadata = elsevier.map(doc_url)
+    elif 'sciencedirect' in doc_url:
+        metadata = elsevier.map(doc_url)
     elif 'springer' in doc_url:
         metadata = springer.map(doc_url)
     elif 'nature' in doc_url:
