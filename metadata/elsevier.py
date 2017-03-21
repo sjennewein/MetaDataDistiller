@@ -22,7 +22,8 @@ def map(url):
     obj = json.loads(data[1:-1])
 
     meta.publication_date = obj['article']['dates']['Publication date']
-    meta.received = obj['article']['dates']['Received']
+    if 'Received' in obj['article']['dates']:
+        meta.received = obj['article']['dates']['Received']
     meta.online_date = obj['article']['dates']['Available online']
 
     for name in obj['authors']['authors']:
