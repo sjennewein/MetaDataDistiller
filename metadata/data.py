@@ -32,7 +32,6 @@ def extract(doi, type=None):
                 if element['type'] == 'URL':
                      doc_url = element['data']['value']
         else:
-            print('return')
             return metadata
 
     #print(doc_url)

@@ -1,7 +1,7 @@
 import json
 import requests
 from bs4 import BeautifulSoup
-from .payload import Payload, Author
+from .payload import Payload, Author, Affiliation
 import re
 
 
@@ -78,48 +78,52 @@ def map2(html):
     meta = Payload()
     td = html.find('title')
     if td:
-        data = td.contents
-        meta.title = data
+        data = td.contents[0]
+        meta.title = str(data).strip()
 
     td = html.find('ul', {'class': 'authorGroup'})
     authors = {}
     affiliation = {}
     if td:
         for li in td.children:
-            name = li.find_all('a')[0].contents[0]
+            reference = []
+            name = str(li.find_all('a')[0].contents[0])
             if li.find('sup'):
-                reference = li.find('sup').contents[0]
+                for sup in li.find_all('sup'):
+                    if sup.contents[0].isalpha():
+                        reference.append(str(sup.contents[0]))
             else:
-                reference = 'a'
+                reference.append('a')
             authors[name] = reference
 
     td = html.find('ul', {'class': 'affiliation'})
     if td:
         for li in td.children:
             if li.find('sup'):
-                reference = li.find('sup').contents[0]
+                reference = str(li.find('sup').contents[0])
             else:
                 reference = 'a'
-            institute = li.find('span').contents[0]
+            institute = str(li.find('span').contents[0])
             affiliation[reference] = institute
 
     for author in authors:
-        for institute in affiliation:
-            if authors[author] == institute:
-                meta.authors.append(Author(surname=author, affiliations=affiliation[institute]))
+        writer = Author(author)
+        for ref in authors[author]:
+            writer.affiliations.append(Affiliation(affiliation[ref]))
+        meta.authors.append(writer)
 
     td = html.find('p', {'class': 'volIssue'})
     (volume, issue) = td.find('a').contents[0].split(',')
-    meta.volumes.first = volume.split()[-1]
-    meta.issues.first = issue.split()[-1]
+    meta.volumes.first = str(volume.split()[-1])
+    meta.issues.first = str(issue.split()[-1])
     (year, pages) = td.contents[-1].split(',')[1:3]
     pages = pages.split()[-1]
     m = re.search('([0-9]*).([0-9]*)', pages, re.UNICODE)
     pages = m.groups()
-    meta.pages.first = pages[0]
-    meta.pages.last = pages[1]
+    meta.pages.first = str(pages[0])
+    meta.pages.last = str(pages[1])
     td = html.find('div', {'class': 'title'})
-    meta.journal_title = td.find('span').contents[0]
+    meta.journal_title = str(td.find('span').contents[0])
     meta.publisher = 'Elsevier'
     td = html.find('dl', {'class': 'articleDates'})
     data = td.find('dd').contents[0].split(',')
@@ -129,13 +133,13 @@ def map2(html):
     for dates in data:
         if 'accepted' in dates.lower():
             m = re.search('([0-9]+.*[0-9]+)', dates)
-            accepted = m.group(0)
+            accepted = str(m.group(0))
         elif 'available' in dates.lower():
             m = re.search('([0-9]+.*[0-9]+)', dates)
-            online = m.group(0)
+            online = str(m.group(0))
         elif 'received' in dates.lower():
             m = re.search('([0-9]+.*[0-9]+)', dates)
-            received = m.group(0)
+            received = str(m.group(0))
     meta.online_date = online
     meta.publication_date = accepted
     meta.received = received
@@ -147,5 +151,5 @@ def map2(html):
                     if 'SDM.doi' in item:
                         m = re.search("'(.*)'", item)
                         data = m.groups()
-                        meta.doi = data[0]
+                        meta.doi = str(data[0])
     return meta
