@@ -41,7 +41,7 @@ for doi in content:
     try:
         metadata = data.extract(doi)
     except:
-        print(doi)
+        #print(doi)
         metadata = {}
 
     registrar = doi.split('/')[0]

@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if [ ! -f ~/papers/RUNNING ] 
 then
