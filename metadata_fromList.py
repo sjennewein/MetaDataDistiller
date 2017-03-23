@@ -42,7 +42,6 @@ for doi in content:
         metadata = data.extract(doi)
     except Exception as err:
         fail = err
-        print(doi)
         metadata = {}
 
     registrar = doi.split('/')[0]
