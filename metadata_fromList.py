@@ -54,7 +54,7 @@ for doi in content:
         with open(output + 'missed.log', 'a') as f:
             f.write(doi + '\n')
         with open(output + 'error.log', 'a') as f:
-            f.write(doi + '\n')
+            f.write(str(fail) + '\n')
         continue
 
     with open(output + doi, 'w') as json_file:
