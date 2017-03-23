@@ -11,6 +11,7 @@ from metadata import ieee
 from metadata import iucr
 from metadata import bioaging
 from metadata import nmd
+from metadata import wkhealth
 
 def extract(doi, type=None):
     metadata = {}
@@ -59,5 +60,7 @@ def extract(doi, type=None):
     elif 'neurobiologyofaging' in doc_url:
         metadata = bioaging.map(doc_url)
     elif 'nmd-journal' in doc_url:
-        metadata = bioaging.map(doc_url)
+        metadata = nmd.map(doc_url)
+    elif 'wkhealth' in doc_url:
+        metadata = wkhealth.map(doi.strip())
     return metadata
