@@ -2,6 +2,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 from .payload import Payload, Author, Affiliation
+from metadata import nmd
 import re
 
 
@@ -19,6 +20,10 @@ def map(url):
         return {}
     html = BeautifulSoup(r.content, 'html.parser')
     r.close()
+
+    if 'nmd-journal' in r.url:
+        return nmd.map(url)
+
     td = html.find('script', {'type': 'application/json'})
 
     if td is None:
