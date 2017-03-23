@@ -37,10 +37,11 @@ content = [x.strip() for x in content]
 total_time = time.time()
 for doi in content:
     start_time = time.time()
-
+    fail = None
     try:
         metadata = data.extract(doi)
-    except:
+    except Exception as err:
+        fail = err
         print(doi)
         metadata = {}
 
@@ -52,6 +53,8 @@ for doi in content:
 
     if not metadata:
         with open(output + 'missed.log', 'a') as f:
+            f.write(doi + '\n')
+        with open(output + 'error.log', 'a') as f:
             f.write(doi + '\n')
         continue
 
