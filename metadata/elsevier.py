@@ -113,15 +113,35 @@ def map2(html):
         meta.authors.append(writer)
 
     td = html.find('p', {'class': 'volIssue'})
-    (volume, issue) = td.find('a').contents[0].split(',')
-    meta.volumes.first = str(volume.split()[-1])
-    meta.issues.first = str(issue.split()[-1])
-    (year, pages) = td.contents[-1].split(',')[1:3]
-    pages = pages.split()[-1]
-    m = re.search('([0-9]*).([0-9]*)', pages, re.UNICODE)
-    pages = m.groups()
-    meta.pages.first = str(pages[0])
-    meta.pages.last = str(pages[1])
+    for token in td.text.split(','):
+        if 'volume' in token.lower():
+            m = re.search('([0-9]+).([0-9]+)', token)
+            if not m:
+                m = re.search('([0-9]+)', token)
+                meta.volumes.first = str(m.group(1))
+                continue
+
+            meta.volumes.first = m.group(0)
+            meta.volumes.last = m.group(1)
+        elif 'issue' in token.lower():
+            m = re.search('([0-9]+).([0-9]+)', token)
+            if not m:
+                m = re.search('([0-9]+)', token)
+                meta.issues.first = m.group(1)
+                continue
+
+            meta.issues.first = m.group(1)
+            meta.issues.last = m.group(2)
+        elif 'page' in token.lower():
+            m = re.search('([0-9]+).([0-9]+)', token)
+            if not m:
+                m = re.search('([0-9]+)', token)
+                meta.pages.first = m.group(1)
+                continue
+
+            meta.pages.first = m.group(1)
+            meta.pages.last = m.group(2)
+
     td = html.find('div', {'class': 'title'})
     meta.journal_title = str(td.find('span').contents[0])
     meta.publisher = 'Elsevier'
@@ -152,4 +172,10 @@ def map2(html):
                         m = re.search("'(.*)'", item)
                         data = m.groups()
                         meta.doi = str(data[0])
+
+    td = html.find('ul', {'class': 'keyword'})
+    if td:
+        for keyword in td.text.split(';'):
+            meta.keywords.append(keyword.strip())
+
     return meta
