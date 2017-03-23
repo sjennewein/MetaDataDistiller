@@ -9,7 +9,7 @@ def map(url):
     meta = Payload()
 
     headers = {
-        'User-Agent': 'Mozilla/5.0',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36',
         'From': 'youremail@domain.com'
     }
 
@@ -164,6 +164,7 @@ def map2(html):
     meta.publication_date = accepted
     meta.received = received
     td = html.find_all('script')
+    doi = False
     for script in td:
         for element in script.contents:
             if 'doi' in element:
@@ -172,6 +173,12 @@ def map2(html):
                         m = re.search("'(.*)'", item)
                         data = m.groups()
                         meta.doi = str(data[0])
+                        doi = True
+                        break
+            if doi:
+                break
+        if doi:
+            break
 
     td = html.find('ul', {'class': 'keyword'})
     if td:

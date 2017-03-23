@@ -9,6 +9,8 @@ from metadata import springer
 from metadata import nature
 from metadata import ieee
 from metadata import iucr
+from metadata import bioaging
+from metadata import nmd
 
 def extract(doi, type=None):
     metadata = {}
@@ -34,7 +36,6 @@ def extract(doi, type=None):
         else:
             return metadata
 
-    #print(doc_url)
     if 'wiley' in doc_url:
         metadata = wiley.map(doc_url)
     elif 'worldscientific' in doc_url:
@@ -55,4 +56,8 @@ def extract(doi, type=None):
         metadata = ieee.map(doc_url)
     elif 'iucr' in doc_url:
         metadata = iucr.map(doc_url)
+    elif 'neurobiologyofaging' in doc_url:
+        metadata = bioaging.map(doc_url)
+    elif 'nmd-journal' in doc_url:
+        metadata = bioaging.map(doc_url)
     return metadata
