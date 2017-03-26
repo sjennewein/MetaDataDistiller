@@ -7,11 +7,33 @@ from .payload import Payload, Author, Affiliation
 def map(url):
     meta = Payload()
 
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36',
+        'From': 'youremail@domain.com'
+    }
+    session = requests.Session()
     try:
-        r = requests.get(url)
+        r = session.get(url, headers=headers)
     except:
         return {}
     html = BeautifulSoup(r.content, 'html.parser')
+    print(html)
+    td = html.find_all('iframe')
+    iframes = []
+    for item in td:
+        iframes.append(session.get('http:' + item.get('src')))
+    r.close()
+    td = html.find('a')
+    url = td.get('href')
+
+    try:
+        r = session.get(url, headers=headers)
+    except:
+        return {}
+
+    html = BeautifulSoup(r.content, 'html.parser')
+    session.close()
+
     metadata = html.find_all("meta")
     r.close()
 
