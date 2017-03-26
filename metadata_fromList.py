@@ -65,6 +65,6 @@ for doi in content:
             out = payload.PayloadEncoder().encode(metadata)
         json_file.write(out)
 
-    print("--- %s seconds ---" % (time.time() - start_time))
+    # print("--- %s seconds ---" % (time.time() - start_time))
 
 # print("--- TOTAL: %s seconds ---" % (time.time() - total_time))
