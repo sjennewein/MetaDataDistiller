@@ -18,6 +18,7 @@ class Payload:
         self.pages = Dict({'first': '', 'last': ''})
         self.publisher = ''
         self.volumes = Dict({'first': '', 'last': ''})
+        self.source = 'page-scraping'
 
 
 class Affiliation:

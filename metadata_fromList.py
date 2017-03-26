@@ -26,7 +26,6 @@ touch(output + 'missed.log')
 try:
     os.makedirs(output)
 except:
-#    print('exist')
     pass
 
 with open(input) as f:
@@ -58,9 +57,14 @@ for doi in content:
         continue
 
     with open(output + doi, 'w') as json_file:
-        out = payload.PayloadEncoder().encode(metadata)
+        if type(metadata) is dict:
+            print('crossref')
+            out = json.dumps(metadata)
+        elif isinstance(metadata,payload.Payload):
+            print('scraping')
+            out = payload.PayloadEncoder().encode(metadata)
         json_file.write(out)
 
-    # print("--- %s seconds ---" % (time.time() - start_time))
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 # print("--- TOTAL: %s seconds ---" % (time.time() - total_time))

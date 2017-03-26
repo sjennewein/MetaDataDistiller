@@ -12,10 +12,17 @@ from metadata import iucr
 from metadata import bioaging
 from metadata import nmd
 from metadata import wkhealth
+from metadata import crossref
 
 def extract(doi, type=None):
     metadata = {}
     url = ''
+
+    if not type:
+        try:
+            return crossref.map(doi)
+        except:
+            pass
 
     if type == 'url':
         doc_url = doi.rstrip()
@@ -36,6 +43,8 @@ def extract(doi, type=None):
                      doc_url = element['data']['value']
         else:
             return metadata
+
+
 
     if 'wiley' in doc_url:
         metadata = wiley.map(doc_url)

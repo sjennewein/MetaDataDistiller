@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from .payload import Payload, Author, Affiliation
 from metadata import nmd
+from metadata import bioaging
 import re
 
 
@@ -23,6 +24,8 @@ def map(url):
 
     if 'nmd-journal' in r.url:
         return nmd.map(url)
+    elif 'neurobiologyofaging' in r.url:
+        return bioaging.map(url)
 
     td = html.find('script', {'type': 'application/json'})
 
@@ -70,7 +73,7 @@ def map(url):
     meta.pages.first = obj['article']['pages'][0]['first-page']
     meta.pages.last = obj['article']['pages'][0]['last-page'] if 'last-page' in obj['article']['pages'][0] else ''
 
-    meta.issues.first = obj['article']['iss-first']
+    meta.issues.first = obj['article']['iss-first'] if 'iss-first' in obj['article'] else ''
     meta.issues.last = obj['article']['iss-last'] if 'iss-last' in obj['article'] else ''
     meta.volumes.first = obj['article']['vol-first']
     meta.volumes.last = obj['article']['vol-last'] if 'vol-last' in obj['article'] else ''
