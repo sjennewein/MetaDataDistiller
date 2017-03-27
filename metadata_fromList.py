@@ -58,10 +58,10 @@ for doi in content:
 
     with open(output + doi, 'w') as json_file:
         if type(metadata) is dict:
-            print('crossref')
+            #print('crossref')
             out = json.dumps(metadata)
         elif isinstance(metadata,payload.Payload):
-            print('scraping')
+            #print('scraping')
             out = payload.PayloadEncoder().encode(metadata)
         json_file.write(out)
 
